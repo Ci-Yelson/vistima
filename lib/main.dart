@@ -3,14 +3,17 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_screenutil/screenutil_init.dart';
+import 'package:provider/provider.dart';
 import 'package:vistima_00/config.dart';
 import 'package:vistima_00/model/SQLHelper.dart';
+import 'package:vistima_00/model/model.dart';
 import 'package:vistima_00/pages/0_HomePage/HomePage.dart';
 import 'package:vistima_00/pages/1_TodoPage/TodoPage.dart';
 import 'package:vistima_00/pages/2_TaskListPage/TaskListPage.dart';
 import 'package:vistima_00/pages/3_UserPage/UserPage.dart';
-import 'package:vistima_00/pages/TimingPage/TimingPage.dart';
+import 'package:vistima_00/viewmodel/startViewModel.dart';
 import 'package:vistima_00/widgets/VBottomAppBar.dart';
 import 'package:vistima_00/widgets/VFloatingActionButton.dart';
 
@@ -61,7 +64,9 @@ class _MyHomePageState extends State<MyHomePage> {
   final _pageController = PageController(initialPage: 0);
   int _pageIndex = 0;
 
-  List<Widget> _pageList = [HomePage(), TodoPage(), TaskListPage(), UserPage()];
+  List<Widget> _getList() {
+    return [HomePage(), TodoPage(), TaskListPage(), UserPage()];
+  }
 
   //点击BottomItem跳转页面
   void _onTap(int index) {
@@ -72,21 +77,45 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> _pageList = _getList();
     return Scaffold(
       // backgroundColor: Colors.grey,
       //*显示页面
-      body: PageView.builder(
-        controller: _pageController,
-        onPageChanged: (index) => setState(() {
-          _pageIndex = index;
-        }),
-        itemBuilder: (BuildContext context, int index) {
-          return _pageList[index];
-        },
-        itemCount: 4,
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          //?状态栏背景颜色
+          Container(
+            height: ScreenUtil().setHeight(25),
+            color: Colors.grey[400],
+          ),
+          Container(
+            height: MediaQuery.of(context).size.height -
+                ScreenUtil().setHeight(25) -
+                ScreenUtil().setHeight(66),
+            child: PageView.builder(
+              controller: _pageController,
+              onPageChanged: (index) => setState(() {
+                _pageIndex = index;
+              }),
+              itemBuilder: (BuildContext context, int index) {
+                return _pageList[index];
+              },
+              itemCount: 4,
+            ),
+          ),
+        ],
       ),
       //*FAB开始按钮
-      floatingActionButton: VFloatingActionButton(context),
+      floatingActionButton: _pageIndex == 0
+          ? Consumer<StartNotifier>(
+              builder: (context, startNotifier, _) {
+                return VFloatingActionButton(
+                    context, _pageIndex, startNotifier.getTodo());
+              },
+            )
+          : VFloatingActionButton(
+              context, _pageIndex, Todo(title: '无标题', tagIds: [])),
       //*FAB与BottomAppBar的镶嵌形式
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       //*底部导航栏

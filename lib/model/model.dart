@@ -71,6 +71,15 @@ class Todo {
     this.startTime,
     this.endTime,
   });
+
+  Task toTask() {
+    return Task(
+      title: title,
+      tagIds: tagIds,
+      describe: describe,
+      startTime: startTime,
+    );
+  }
 }
 
 //-Tag类

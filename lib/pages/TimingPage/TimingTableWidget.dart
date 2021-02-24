@@ -10,7 +10,7 @@ class TimingTable extends StatelessWidget {
     return Consumer<TimingNotifier>(builder: (context, timingNotifier, _) {
       int totalTime = timingNotifier.totalTime.toInt();
       return Container(
-        height: ScreenUtil().setHeight(340),
+        height: ScreenUtil().setHeight(300),
         child: Stack(
           children: <Widget>[
             Center(
@@ -50,7 +50,10 @@ Widget timePiece(
             text:
                 "${(totalTime ~/ 36000).toStringAsFixed(0)}${((totalTime % 36000) ~/ 3600).toStringAsFixed(0)}",
             style: TextStyle(
-                fontSize: fontSize, color: color, fontFamily: fontFamily),
+                fontSize: fontSize,
+                color: color,
+                fontFamily: fontFamily,
+                fontWeight: FontWeight.bold),
           )
         : TextSpan(),
     showWay < 3
@@ -58,7 +61,10 @@ Widget timePiece(
             text:
                 ":${(totalTime % 3600 ~/ 600).toStringAsFixed(0)}${((totalTime % 600) ~/ 60).toStringAsFixed(0)}",
             style: TextStyle(
-                fontSize: fontSize, color: color, fontFamily: fontFamily),
+                fontSize: fontSize,
+                color: color,
+                fontFamily: fontFamily,
+                fontWeight: FontWeight.bold),
           )
         : TextSpan(),
     showWay < 2
@@ -66,7 +72,10 @@ Widget timePiece(
             text:
                 ":${(totalTime % 60 ~/ 10).toStringAsFixed(0)}${(totalTime % 10).toStringAsFixed(0)}",
             style: TextStyle(
-                fontSize: fontSize, color: color, fontFamily: fontFamily),
+                fontSize: fontSize,
+                color: color,
+                fontFamily: fontFamily,
+                fontWeight: FontWeight.bold),
           )
         : TextSpan(),
     showWay < 1
@@ -74,7 +83,10 @@ Widget timePiece(
             text:
                 ":${(totalTime % 100 ~/ 10).toStringAsFixed(0)}${(totalTime % 10).toStringAsFixed(0)}",
             style: TextStyle(
-                fontSize: 32, color: Colors.white, fontFamily: fontFamily),
+                fontSize: 32,
+                color: Colors.white,
+                fontFamily: fontFamily,
+                fontWeight: FontWeight.bold),
           )
         : TextSpan(),
   ]));

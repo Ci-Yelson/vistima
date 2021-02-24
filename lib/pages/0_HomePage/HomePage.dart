@@ -6,8 +6,11 @@ import 'package:vistima_00/pages/0_HomePage/TagSheet.dart';
 import 'package:vistima_00/pages/0_HomePage/TimerWidget.dart';
 import 'package:vistima_00/pages/0_HomePage/TodoSheet.dart';
 import 'package:vistima_00/utils.dart';
+import 'package:vistima_00/viewmodel/startViewModel.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({Key key}) : super(key: key);
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -25,73 +28,63 @@ class _HomePageState extends State<HomePage>
       body: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
-        child: Column(
-          children: [
-            //?状态栏背景颜色
-            Container(
-              height: ScreenUtil().setHeight(25),
-              color: Colors.grey[400],
-            ),
-            //*主页面
-            Container(
-              padding: EdgeInsets.only(left: pageMagrin, right: pageMagrin),
-              child: Column(
+        child: Container(
+          padding: EdgeInsets.only(left: pageMagrin, right: pageMagrin),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              //*P1
+              SizedBox(
+                height: ScreenUtil().setHeight(17),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  //*P1
-                  SizedBox(
-                    height: ScreenUtil().setHeight(17),
-                  ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Container(
-                            // color: Colors.red,
-                            child: Image.asset("assets/icons/boltfill.png"),
-                            width: ScreenUtil().setWidth(32),
-                            height: ScreenUtil().setHeight(32),
-                          ),
-                          Container(
-                            child: Text(
-                              "快速开始",
-                              style: TextStyle(
-                                  fontSize: ScreenUtil().setSp(35),
-                                  color: vColorMap['subText'],
-                                  fontFamily: textfont),
-                            ),
-                          ),
-                        ],
-                      ),
-                      TimerWidget(),
-                    ],
-                  ),
-                  SizedBox(
-                    height: ScreenUtil().setHeight(18),
-                  ),
-                  //*P2
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      //*Todo
-                      Container(width: todoSheetWidth, child: TodoSheet()),
-                      SizedBox(
-                        width: sheetGapWidth,
-                      ),
-                      //*Tag
                       Container(
-                        width: tagSheetWidth,
-                        child: TagSheet(),
-                      )
+                        // color: Colors.red,
+                        child: Image.asset("assets/icons/boltfill.png"),
+                        width: ScreenUtil().setWidth(32),
+                        height: ScreenUtil().setHeight(32),
+                      ),
+                      Container(
+                        child: Text(
+                          "快速开始",
+                          style: TextStyle(
+                              fontSize: ScreenUtil().setSp(35),
+                              color: vColorMap['subText'],
+                              fontFamily: textfont),
+                        ),
+                      ),
                     ],
-                  )
+                  ),
+                  TimerWidget(),
                 ],
               ),
-            ),
-          ],
+              SizedBox(
+                height: ScreenUtil().setHeight(18),
+              ),
+              //*P2
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  //*Todo
+                  Container(width: todoSheetWidth, child: todoColumn()),
+                  SizedBox(
+                    width: sheetGapWidth,
+                  ),
+                  //*Tag
+                  Container(
+                    width: tagSheetWidth,
+                    child: tagColumn(),
+                  )
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -99,4 +92,91 @@ class _HomePageState extends State<HomePage>
 
   @override
   bool get wantKeepAlive => true;
+
+  Widget todoColumn() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        //*P1
+        Container(
+          width: MediaQuery.of(context).size.width,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                child: Text(
+                  "待办事项",
+                  style: TextStyle(
+                      fontSize: ScreenUtil().setSp(30),
+                      color: vColorMap['mainText'],
+                      fontWeight: FontWeight.w600,
+                      fontFamily: textfont),
+                ),
+              ),
+              Expanded(
+                  child: Container(
+                width: 1,
+              )),
+              Container(
+                child: InkWell(
+                    onTap: () {},
+                    child: Image.asset(
+                      'assets/icons/名称顺序.png',
+                      width: ScreenUtil().setWidth(28),
+                      height: ScreenUtil().setHeight(28),
+                    )),
+              )
+            ],
+          ),
+        ),
+        //*P2
+        TodoSheet(),
+      ],
+    );
+  }
+
+  Widget tagColumn() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        //*P1
+        Container(
+          width: MediaQuery.of(context).size.width,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                child: Text(
+                  "标签",
+                  style: TextStyle(
+                      fontSize: ScreenUtil().setSp(30),
+                      color: vColorMap['mainText'],
+                      fontWeight: FontWeight.w600,
+                      fontFamily: textfont),
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  width: 1,
+                ),
+              ),
+              Container(
+                child: InkWell(
+                    onTap: () {},
+                    child: Image.asset(
+                      'assets/icons/edit.png',
+                      width: ScreenUtil().setWidth(28),
+                      height: ScreenUtil().setHeight(28),
+                    )),
+              )
+            ],
+          ),
+        ),
+        //*P2
+        TagSheet(),
+      ],
+    );
+  }
 }

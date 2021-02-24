@@ -1,87 +1,59 @@
+import 'package:common_utils/common_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:vistima_00/const.dart';
 import 'package:vistima_00/model/model.dart';
 import 'package:vistima_00/utils.dart';
-import 'package:vistima_00/viewmodel/tagViewModel.dart';
+import 'package:vistima_00/viewmodel/startViewModel.dart';
 import 'package:vistima_00/viewmodel/todoViewModel.dart';
+import 'package:vistima_00/widgets/TagWrap.dart';
 
 class TodoSheet extends StatefulWidget {
+  const TodoSheet({Key key}) : super(key: key);
+
   @override
   _TodoSheetState createState() => _TodoSheetState();
 }
 
-class _TodoSheetState extends State<TodoSheet> {
-  int todoSelectIndex = 0;
+class _TodoSheetState extends State<TodoSheet>
+    with AutomaticKeepAliveClientMixin {
+  int _selectIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        //*P1
-        Container(
-          width: MediaQuery.of(context).size.width,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                child: Text(
-                  "待办事项",
-                  style: TextStyle(
-                      fontSize: ScreenUtil().setSp(30),
-                      color: vColorMap['mainText'],
-                      fontWeight: FontWeight.w600,
-                      fontFamily: textfont),
-                ),
-              ),
-              Expanded(
-                  child: Container(
-                width: 1,
-              )),
-              Container(
-                child: InkWell(
-                    onTap: () {},
-                    child: Image.asset(
-                      'assets/icons/名称顺序.png',
-                      width: ScreenUtil().setWidth(28),
-                      height: ScreenUtil().setHeight(28),
-                    )),
-              )
-            ],
-          ),
-        ),
-        //*P2
-        Container(
-          width: todoSheetWidth,
-          height: todoSheetHeight,
-          color: greyBG,
-          child: Container(
-            height: todoSheetHeight,
-            child:
-                Consumer<TodosNotifier>(builder: (context, todosNotifier, _) {
-              List<Todo> allTodos = todosNotifier.getTodos();
-              List<Todo> todos = allTodos.where((t) => t.type == 0).toList();
-              List<Todo> processings =
-                  allTodos.where((t) => t.type == 1).toList();
+    super.build(context);
+    LogUtil.e('TodoSheet-build');
+    return Container(
+      width: todoSheetWidth,
+      height: todoSheetHeight,
+      color: greyBG,
+      child: Container(
+        height: todoSheetHeight,
+        child: Consumer2<TodosNotifier, StartNotifier>(
+            builder: (context, todosNotifier, startNotifier, _) {
+          //*获取todos并分类显示
+          List<Todo> allTodos = todosNotifier.getTodos();
+          List<Todo> todos = allTodos.where((t) => t.type == 0).toList();
+          List<Todo> processings = allTodos.where((t) => t.type == 1).toList();
 
-              List<Widget> allList = todoList(todos: processings, type: 1) +
-                  todoList(todos: todos);
-              return ListView(
-                padding: EdgeInsets.only(top: 0),
-                children: allList,
-              );
-            }),
-          ),
-        ),
-      ],
+          List<Widget> allList = todoList(
+                  todos: processings, type: 1, startNotifier: startNotifier) +
+              todoList(todos: todos, startNotifier: startNotifier);
+          return ListView(
+            padding: EdgeInsets.only(top: 0),
+            children: allList,
+          );
+        }),
+      ),
     );
   }
 
   //* type=1:ProcessingList; type=0:TodoList
-  List<Widget> todoList({@required List<Todo> todos, int type = 0}) {
+  List<Widget> todoList(
+      {@required List<Todo> todos,
+      int type = 0,
+      @required StartNotifier startNotifier}) {
     if (todos.isEmpty) return [Container()];
     return [
       Container(
@@ -124,28 +96,34 @@ class _TodoSheetState extends State<TodoSheet> {
           ],
         ),
       ),
+      //!如何使用Selector缩小刷新范围
       ListView.builder(
         physics: const NeverScrollableScrollPhysics(),
         padding: EdgeInsets.zero,
         shrinkWrap: true,
         itemBuilder: (context, index) {
-          return todoCard(todo: todos[index]);
+          return todoCard(todo: todos[index], startNotifier: startNotifier);
         },
         itemCount: todos.length,
-      ),
+      )
     ];
   }
 
-  Widget todoCard({Todo todo}) {
+  Widget todoCard({Todo todo, @required StartNotifier startNotifier}) {
     return InkWell(
       onTap: () {
         //*选中事件处理
-        // LogUtil.e("tap-${todo.id}");
+        //!
         setState(() {
-          if (todoSelectIndex == todo.id)
-            todoSelectIndex = 0;
-          else
-            todoSelectIndex = todo.id;
+          if (_selectIndex == todo.id) {
+            _selectIndex = 0;
+            todo = Todo(tagIds: []);
+          } else {
+            _selectIndex = todo.id;
+          }
+
+          startNotifier.setTodo(todo);
+          LogUtil.e(todo.toMap(), tag: 'TodoSelect');
         });
       },
       child: Card(
@@ -165,30 +143,18 @@ class _TodoSheetState extends State<TodoSheet> {
                     todo.title,
                     style: TextStyle(fontSize: ScreenUtil().setSp(18)),
                   ),
-                  Consumer<TagsNotifier>(builder: (context, tagsNotifier, _) {
-                    List<Tag> tags = tagsNotifier.getTags();
-                    return Wrap(
-                      children: List.generate(
-                          todo.tagIds.length,
-                          (i) => sizedTagChip(
-                                Text(
-                                  tags
-                                      .firstWhere((t) => t.id == todo.tagIds[i])
-                                      .title,
-                                  style: TextStyle(
-                                      fontSize: ScreenUtil().setSp(14),
-                                      color: Colors.white),
-                                ),
-                              )),
-                    );
-                  }),
+                  //*tagWrap
+                  tagWrap(
+                      context: context,
+                      tagIds: todo.tagIds,
+                      backGroundColor: vColorMap['icon']),
                 ],
               ),
             ),
             //*选中样式处理
             Container(
               height: todoCardHeight,
-              color: todoSelectIndex == todo.id
+              color: _selectIndex == todo.id
                   ? Colors.grey.withAlpha(150)
                   : Colors.transparent,
             ),
@@ -198,20 +164,6 @@ class _TodoSheetState extends State<TodoSheet> {
     );
   }
 
-  Widget sizedTagChip(Widget text) {
-    return Card(
-      elevation: 0,
-      color: vColorMap['icon'],
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(14.0))), //设置圆角
-      child: Padding(
-        padding: EdgeInsets.only(
-            top: ScreenUtil().setHeight(2),
-            bottom: ScreenUtil().setHeight(2),
-            left: ScreenUtil().setWidth(8),
-            right: ScreenUtil().setWidth(8)),
-        child: text,
-      ),
-    );
-  }
+  @override
+  bool get wantKeepAlive => true;
 }

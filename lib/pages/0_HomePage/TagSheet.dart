@@ -1,90 +1,54 @@
+import 'package:common_utils/common_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:vistima_00/const.dart';
 import 'package:vistima_00/model/model.dart';
-import 'package:vistima_00/utils.dart';
+import 'package:vistima_00/viewmodel/startViewModel.dart';
 import 'package:vistima_00/viewmodel/tagViewModel.dart';
 
 class TagSheet extends StatefulWidget {
+  const TagSheet({Key key}) : super(key: key);
+
   @override
   _TagSheetState createState() => _TagSheetState();
 }
 
 class _TagSheetState extends State<TagSheet> {
-  int tagSelectIndex = 0;
+  Todo _todo;
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        //*P1
-        Container(
-          width: MediaQuery.of(context).size.width,
-          // color: Colors.red,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                child: Text(
-                  "标签",
-                  style: TextStyle(
-                      fontSize: ScreenUtil().setSp(30),
-                      color: vColorMap['mainText'],
-                      fontWeight: FontWeight.w600,
-                      fontFamily: textfont),
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  width: 1,
-                ),
-              ),
-              Container(
-                child: InkWell(
-                    onTap: () {},
-                    child: Image.asset(
-                      'assets/icons/edit.png',
-                      width: ScreenUtil().setWidth(28),
-                      height: ScreenUtil().setHeight(28),
-                    )),
-              )
-            ],
-          ),
-        ),
-        SizedBox(
-          height: 3,
-        ),
-        //*P2
-        Container(
-            height: tagSheetHeight,
-            alignment: Alignment.topCenter,
-            color: greyBG,
-            child: Consumer<TagsNotifier>(builder: (context, tagsNotifier, _) {
-              List<Tag> tags = tagsNotifier.getTags();
-              return ListView.builder(
-                padding: EdgeInsets.only(top: 3),
-                itemBuilder: (context, index) {
-                  return tagCard(tag: tags[index]);
-                },
-                itemCount: tags.length,
-              );
-            })),
-      ],
-    );
+    return Container(
+        height: tagSheetHeight,
+        alignment: Alignment.topCenter,
+        color: greyBG,
+        child: Consumer2<TagsNotifier, StartNotifier>(
+            builder: (context, tagsNotifier, startNotifier, _) {
+          //*初始化_todo
+          _todo = startNotifier.getTodo();
+          List<Tag> tags = tagsNotifier.getTags();
+          return ListView.builder(
+            padding: EdgeInsets.only(top: 3),
+            itemBuilder: (context, index) {
+              return tagCard(tag: tags[index], startNotifier: startNotifier);
+            },
+            itemCount: tags.length,
+          );
+        }));
   }
 
-  Widget tagCard({Tag tag}) {
+  Widget tagCard({Tag tag, StartNotifier startNotifier}) {
     return InkWell(
       onTap: () {
         //*选中事件处理
-        // LogUtil.e("tap-${tag.id}");
+        dynamic id = tag.id;
         setState(() {
-          if (tagSelectIndex == tag.id)
-            tagSelectIndex = 0;
-          else
-            tagSelectIndex = tag.id;
+          if (_todo.tagIds.contains(id)) {
+            startNotifier.setTodoTagIds(tagId: id, add: false);
+          } else {
+            startNotifier.setTodoTagIds(tagId: id);
+          }
+          LogUtil.e(_todo.toMap(), tag: 'TagSelect');
         });
       },
       child: Card(
@@ -100,7 +64,7 @@ class _TagSheetState extends State<TagSheet> {
                 )),
             Container(
               height: tagCardHeight,
-              color: tagSelectIndex == tag.id
+              color: _todo.tagIds.contains(tag.id)
                   ? Colors.grey.withAlpha(150)
                   : Colors.transparent,
             )
