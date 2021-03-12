@@ -146,4 +146,106 @@ class SQLHelper {
     // LogUtil.e(taglist, tag: '>taglist');
     return taglist;
   }
+
+  //*添加task
+  static Future<int> insertTask(Task task) async {
+    assert(task.id == null);
+    final Database db = await _getDatabase();
+
+    final int id = await db.insert(
+      'tasks',
+      task.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    return id;
+  }
+
+  //*添加todo
+  static Future<int> insertTodo(Todo todo) async {
+    assert(todo.id == null);
+    final Database db = await _getDatabase();
+
+    final int id = await db.insert(
+      'todos',
+      todo.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    return id;
+  }
+
+  //*添加tag
+  static Future<int> insertTag(Tag tag) async {
+    assert(tag.id == null);
+    final Database db = await _getDatabase();
+
+    final int id = await db.insert(
+      'tags',
+      tag.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    return id;
+  }
+
+  //*删除task
+  static Future<void> deleteTask(int id) async {
+    final Database db = await _getDatabase();
+    await db.delete(
+      'tasks',
+      where: "id = ?",
+      whereArgs: [id],
+    );
+  }
+
+  //*删除todo
+  static Future<void> deleteTodo(int id) async {
+    final Database db = await _getDatabase();
+    await db.delete(
+      'todos',
+      where: "id = ?",
+      whereArgs: [id],
+    );
+  }
+
+  //*删除tag
+  static Future<void> deleteTag(int id) async {
+    final Database db = await _getDatabase();
+    await db.delete(
+      'tags',
+      where: "id = ?",
+      whereArgs: [id],
+    );
+  }
+
+  //*更新task
+  static Future<void> updateTask(int id, Task newTask) async {
+    final Database db = await _getDatabase();
+    await db.update(
+      'tasks',
+      newTask.toMap(),
+      where: "id = ?",
+      whereArgs: [id],
+    );
+  }
+
+  //*更新todo
+  static Future<void> updateTodo(int id, Todo newTodo) async {
+    final Database db = await _getDatabase();
+    await db.update(
+      'todos',
+      newTodo.toMap(),
+      where: "id = ?",
+      whereArgs: [id],
+    );
+  }
+
+  //*更新tag
+  static Future<void> updateTag(int id, Tag newTag) async {
+    final Database db = await _getDatabase();
+    await db.update(
+      'tags',
+      newTag.toMap(),
+      where: "id = ?",
+      whereArgs: [id],
+    );
+  }
 }

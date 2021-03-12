@@ -117,7 +117,7 @@ class _TodoSheetState extends State<TodoSheet>
         setState(() {
           if (_selectIndex == todo.id) {
             _selectIndex = 0;
-            todo = Todo(tagIds: []);
+            todo = Todo(title: "无标题", tagIds: []);
           } else {
             _selectIndex = todo.id;
           }
@@ -133,7 +133,7 @@ class _TodoSheetState extends State<TodoSheet>
               height: todoCardHeight,
               alignment: Alignment.centerLeft,
               padding: EdgeInsets.only(
-                top: ScreenUtil().setHeight(6),
+                top: ScreenUtil().setHeight(4),
                 left: ScreenUtil().setWidth(10),
               ),
               child: Column(

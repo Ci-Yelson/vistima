@@ -51,4 +51,23 @@ class TodosNotifier extends ChangeNotifier {
   }
 
   List<Todo> getTodos() => _todos;
+
+  //*添加todo
+  Future<int> insert(Todo todo) async {
+    int id = await SQLHelper.insertTodo(todo);
+    await _refresh();
+    return id;
+  }
+
+  //*删除todo
+  Future<void> delete(int id) async {
+    await SQLHelper.deleteTodo(id);
+    await _refresh();
+  }
+
+  //*更新todo
+  Future<void> update(int id, Todo newTodo) async {
+    await SQLHelper.updateTodo(id, newTodo);
+    await _refresh();
+  }
 }

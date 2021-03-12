@@ -44,4 +44,23 @@ class TasksNotifier extends ChangeNotifier {
         .reversed
         .toList();
   }
+
+  //*添加task
+  Future<int> insert(Task task) async {
+    int id = await SQLHelper.insertTask(task);
+    await _refresh();
+    return id;
+  }
+
+  //*删除task
+  Future<void> delete(int id) async {
+    await SQLHelper.deleteTask(id);
+    await _refresh();
+  }
+
+  //*更新task
+  Future<void> update(int id, Task newTask) async {
+    await SQLHelper.updateTask(id, newTask);
+    await _refresh();
+  }
 }

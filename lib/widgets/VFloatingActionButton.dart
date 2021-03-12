@@ -7,9 +7,11 @@ import 'package:vistima_00/pages/TimingPage/TimingPage.dart';
 import 'package:vistima_00/utils.dart';
 
 // ignore: non_constant_identifier_names
-Widget VFloatingActionButton(BuildContext context, int pageIndex, Todo todo) {
+Widget VFloatingActionButton(
+    BuildContext context, int pageIndex, Todo todo, int startType) {
   // LogUtil.e("Build", tag: 'VFAB');
   // LogUtil.e(pageIndex, tag: 'VFAB');
+  LogUtil.e(startType, tag: "startType");
   return OpenContainer(
       closedColor: Colors.transparent,
       closedElevation: 0,
@@ -21,6 +23,7 @@ Widget VFloatingActionButton(BuildContext context, int pageIndex, Todo todo) {
       openBuilder: (context, _) {
         return TimingPage(
           todo: todo,
+          startType: startType,
         );
       });
 }

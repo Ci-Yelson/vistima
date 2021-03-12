@@ -33,6 +33,16 @@ class Task {
     this.startTime,
     this.endTime,
   }) : this.timeCost = endTime != null ? endTime.difference(startTime) : null;
+
+  Todo toTodo({int type = 0}) {
+    return Todo(
+        title: title,
+        describe: describe,
+        tagIds: tagIds,
+        startTime: startTime,
+        endTime: endTime,
+        type: type);
+  }
 }
 
 //-Todo类

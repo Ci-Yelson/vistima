@@ -21,15 +21,21 @@ class TaskTable extends StatelessWidget {
         itemCount: tasks.length,
         itemBuilder: (context, index) {
           // LogUtil.e(tasks[index].toMap(), tag: 'TaskTable');
-          return OpenContainer(
-              // openColor: Colors.transparent,
-              openElevation: 0,
-              closedBuilder: (_, __) {
-                return TaskCard(task: tasks[index]);
-              },
-              openBuilder: (_, __) {
-                return TaskDetailPage();
-              });
+          return Padding(
+            padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(8)),
+            child: OpenContainer(
+                closedElevation: 0,
+                // openColor: Colors.transparent,
+                openElevation: 0,
+                closedBuilder: (_, __) {
+                  return TaskCard(task: tasks[index]);
+                },
+                openBuilder: (_, __) {
+                  return TaskDetailPage(
+                    task: tasks[index],
+                  );
+                }),
+          );
         });
   }
 }
@@ -124,7 +130,7 @@ class TaskCard extends StatelessWidget {
             alignment: Alignment.center,
             // color: Colors.lightGreen,
             width: ScreenUtil().setWidth(200),
-            padding: EdgeInsets.only(top: ScreenUtil().setHeight(5)),
+            padding: EdgeInsets.only(top: ScreenUtil().setHeight(10)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

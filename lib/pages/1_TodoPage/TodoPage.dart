@@ -7,6 +7,7 @@ import 'package:vistima_00/utils.dart';
 import 'package:vistima_00/viewmodel/startViewModel.dart';
 import 'package:vistima_00/viewmodel/todoViewModel.dart';
 import 'package:vistima_00/widgets/TagWrap.dart';
+import 'package:vistima_00/widgets/TimerWidget.dart';
 
 class TodoPage extends StatefulWidget {
   const TodoPage({Key key}) : super(key: key);
@@ -21,7 +22,7 @@ class _TodoPageState extends State<TodoPage>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white,
       body: Padding(
         padding: EdgeInsets.only(left: pageMagrin, right: pageMagrin),
         child: Column(
@@ -36,9 +37,6 @@ class _TodoPageState extends State<TodoPage>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  SizedBox(
-                    width: ScreenUtil().setWidth(32),
-                  ),
                   Container(
                     child: Image.asset(
                       'assets/icons/详细描述.png',
@@ -64,20 +62,12 @@ class _TodoPageState extends State<TodoPage>
                       child: Container(
                     width: 1,
                   )),
-                  Container(
-                    child: InkWell(
-                        onTap: () {},
-                        child: Image.asset(
-                          'assets/icons/名称顺序.png',
-                          width: ScreenUtil().setWidth(35),
-                          height: ScreenUtil().setHeight(35),
-                        )),
-                  )
+                  TimerWidget()
                 ],
               ),
             ),
             SizedBox(
-              height: ScreenUtil().setHeight(18),
+              height: ScreenUtil().setHeight(3),
             ),
             //*P2
             Container(
@@ -89,15 +79,29 @@ class _TodoPageState extends State<TodoPage>
                 List<Todo> todos = allTodos.where((t) => t.type == 0).toList();
                 List<Todo> processings =
                     allTodos.where((t) => t.type == 1).toList();
+                List<Todo> dones = allTodos.where((t) => t.type == 2).toList();
 
-                List<Widget> allList = todoList(
-                        todos: processings,
-                        type: 1,
-                        startNotifier: startNotifier) +
-                    todoList(todos: todos, startNotifier: startNotifier);
+                // List<Widget> allList = todoList(
+                //         todos: processings,
+                //         type: 1,
+                //         startNotifier: startNotifier) +
+                //     todoList(todos: todos, startNotifier: startNotifier) +
+                //     todoList(
+                //         todos: dones, type: 2, startNotifier: startNotifier);
+
                 return ListView(
                   padding: EdgeInsets.only(top: 0),
-                  children: allList,
+                  // children: allList,
+                  children: [
+                    expansionList(
+                        todos: processings,
+                        type: 1,
+                        startNotifier: startNotifier),
+                    expansionList(
+                        todos: todos, type: 0, startNotifier: startNotifier),
+                    expansionList(
+                        todos: dones, type: 2, startNotifier: startNotifier),
+                  ],
                 );
               }),
             ),
@@ -107,50 +111,103 @@ class _TodoPageState extends State<TodoPage>
     );
   }
 
-  //* type=1:ProcessingList; type=0:TodoList
-  List<Widget> todoList(
+  Widget expansionList(
       {@required List<Todo> todos,
       int type = 0,
       @required StartNotifier startNotifier}) {
-    if (todos.isEmpty) return [Container()];
-    return [
-      Container(
-        padding: EdgeInsets.only(
-          top: ScreenUtil().setHeight(8),
-          bottom: ScreenUtil().setHeight(8),
-        ),
-        alignment: Alignment.centerLeft,
+    String borderTiltle = "待完成";
+    if (type == 1)
+      borderTiltle = "正在进行";
+    else if (type == 2) borderTiltle = "已完成";
+    return ExpansionTile(
+      backgroundColor: Colors.transparent,
+      childrenPadding: EdgeInsets.zero,
+      tilePadding: EdgeInsets.symmetric(horizontal: 16),
+      title: Container(
+        height: ScreenUtil().setHeight(30),
+        // color: Colors.blue,
         child: Row(
           children: [
-            Container(
-              margin: EdgeInsets.only(
-                top: ScreenUtil().setHeight(4),
-                bottom: ScreenUtil().setHeight(4),
-                left: ScreenUtil().setWidth(4),
-                right: ScreenUtil().setWidth(4),
-              ),
-              child: ClipOval(
-                  child: Container(
-                height: ScreenUtil().setHeight(5),
-                width: ScreenUtil().setWidth(5),
-                color: vColorMap['processing_todo'],
-              )),
-            ),
             Text(
-              type == 0 ? "待完成" : "正在进行",
+              borderTiltle,
               style: TextStyle(
                   fontSize: ScreenUtil().setSp(20),
                   // fontFamily: textfont,
                   color: vColorMap['processing_todo']),
             ),
-            SizedBox(
-              width: ScreenUtil().setWidth(6),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 6),
+              margin: EdgeInsets.symmetric(horizontal: 6),
+              child: Text(
+                "${todos.length}",
+                style: TextStyle(color: Colors.white),
+              ),
+              color: vColorMap['processing_todo'],
             ),
             Expanded(
                 child: Container(
-              height: 1,
+              height: 1.5,
               color: vColorMap['processing_todo'],
             ))
+          ],
+        ),
+      ),
+      initiallyExpanded: type == 1 ? true : false,
+      children:
+          todoList(todos: todos, type: type, startNotifier: startNotifier),
+    );
+  }
+
+  //* type=0:TodoList; type=1:ProcessingList; type=2:DoneList;
+  List<Widget> todoList(
+      {@required List<Todo> todos,
+      int type = 0,
+      @required StartNotifier startNotifier}) {
+    if (todos.isEmpty) return [Container()];
+
+    // String borderTiltle = "待完成";
+    // if (type == 1)
+    //   borderTiltle = "正在进行";
+    // else if (type == 2) borderTiltle = "已完成";
+
+    return [
+      Container(
+        padding: EdgeInsets.only(
+            // top: ScreenUtil().setHeight(8),
+            // bottom: ScreenUtil().setHeight(8),
+            ),
+        alignment: Alignment.centerLeft,
+        child: Row(
+          children: [
+            // Container(
+            //   margin: EdgeInsets.only(
+            //     top: ScreenUtil().setHeight(4),
+            //     bottom: ScreenUtil().setHeight(4),
+            //     left: ScreenUtil().setWidth(4),
+            //     right: ScreenUtil().setWidth(4),
+            //   ),
+            //   child: ClipOval(
+            //       child: Container(
+            //     height: ScreenUtil().setHeight(5),
+            //     width: ScreenUtil().setWidth(5),
+            //     color: vColorMap['processing_todo'],
+            //   )),
+            // ),
+            // Text(
+            //   borderTiltle,
+            //   style: TextStyle(
+            //       fontSize: ScreenUtil().setSp(20),
+            //       // fontFamily: textfont,
+            //       color: vColorMap['processing_todo']),
+            // ),
+            // SizedBox(
+            //   width: ScreenUtil().setWidth(6),
+            // ),
+            // Expanded(
+            //     child: Container(
+            //   height: 1,
+            //   color: vColorMap['processing_todo'],
+            // ))
           ],
         ),
       ),
@@ -194,7 +251,7 @@ class _TodoPageState extends State<TodoPage>
               height: todoCardHeight,
               alignment: Alignment.centerLeft,
               padding: EdgeInsets.only(
-                top: ScreenUtil().setHeight(6),
+                top: ScreenUtil().setHeight(4),
                 left: ScreenUtil().setWidth(10),
               ),
               child: Column(

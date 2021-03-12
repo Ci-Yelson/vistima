@@ -27,4 +27,23 @@ class TagsNotifier extends ChangeNotifier {
   }
 
   List<Tag> getTags() => _tags;
+
+  //*添加tag
+  Future<int> insert(Tag tag) async {
+    int id = await SQLHelper.insertTag(tag);
+    await _refresh();
+    return id;
+  }
+
+  //*删除tag
+  Future<void> delete(int id) async {
+    await SQLHelper.deleteTag(id);
+    await _refresh();
+  }
+
+  //*更新tag
+  Future<void> update(int id, Tag newTag) async {
+    await SQLHelper.updateTag(id, newTag);
+    await _refresh();
+  }
 }

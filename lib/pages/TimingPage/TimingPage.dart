@@ -6,23 +6,28 @@ import 'package:provider/provider.dart';
 import 'package:vistima_00/const.dart';
 import 'package:flutter/material.dart';
 import 'package:vistima_00/model/model.dart';
+import 'package:vistima_00/pages/2_TaskListPage/TaskDetailPage.dart';
 import 'package:vistima_00/pages/TimingPage/TimingNotifier.dart';
 import 'package:vistima_00/pages/TimingPage/TimingTableWidget.dart';
 import 'package:vistima_00/utils.dart';
+import 'package:vistima_00/viewmodel/taskViewModel.dart';
+import 'package:vistima_00/viewmodel/todoViewModel.dart';
 import 'package:vistima_00/widgets/TagEdit.dart';
 import 'package:vistima_00/widgets/TagWrap.dart';
 
 class TimingPage extends StatefulWidget {
   final Todo todo;
+  final int startType; //*3种开始方式 {0,1,2}
 
-  TimingPage({Key key, @required this.todo}) : super(key: key);
+  TimingPage({Key key, @required this.todo, this.startType = 2})
+      : super(key: key);
 
   @override
   _TimingPageState createState() => _TimingPageState();
 }
 
 class _TimingPageState extends State<TimingPage> {
-  TextEditingController titleController;
+  TextEditingController titleController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +36,11 @@ class _TimingPageState extends State<TimingPage> {
 
     //*计时状态管理
     final timingNotifier = TimingNotifier();
+    _task.startTime = DateTime.now();
     timingNotifier.startRecordTime();
 
     return Scaffold(
+      resizeToAvoidBottomPadding: true,
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
@@ -94,52 +101,101 @@ class _TimingPageState extends State<TimingPage> {
                       color: Colors.transparent,
                       height: ScreenUtil().setHeight(53),
                       alignment: Alignment.center,
-                      child: Row(
-                        // mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              //!下次继续
-                            },
-                            child: Container(
-                              alignment: Alignment.center,
-                              padding: EdgeInsets.only(
-                                left: ScreenUtil().setWidth(46),
-                                right: ScreenUtil().setWidth(45),
+                      child: Consumer2<TasksNotifier, TodosNotifier>(builder:
+                          (context, tasksNotifier, todosNotifier, child) {
+                        return Row(
+                            // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  //!下次继续
+                                  LogUtil.e(widget.startType,
+                                      tag: "widget.startType");
+                                  //*3种开始方式分别处理 {0,1,2}
+                                  if (widget.startType == 0 ||
+                                      widget.startType == 2) {
+                                    Todo newProcessing = _task.toTodo(type: 1);
+                                    //*
+                                    newProcessing.endTime = DateTime.now();
+                                    todosNotifier.insert(newProcessing);
+                                  } else if (widget.startType == 1) {
+                                    if (widget.todo.type == 0) {
+                                      // todosNotifier
+                                      //     .todosInId(widget.todo.id)
+                                      //     .type = 1;
+                                      // //*
+                                      // todosNotifier.notifyListeners();
+                                      widget.todo.type = 1;
+                                      todosNotifier.update(
+                                          widget.todo.id, widget.todo);
+                                    }
+                                  }
+
+                                  //*AddTask
+                                  timingNotifier.tapStop();
+                                  addTask(
+                                      task: _task,
+                                      tasksNotifier: tasksNotifier,
+                                      titleController: titleController);
+                                },
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  padding: EdgeInsets.only(
+                                    left: ScreenUtil().setWidth(46),
+                                    right: ScreenUtil().setWidth(45),
+                                  ),
+                                  child: Text(
+                                    "下次继续",
+                                    style: TextStyle(
+                                        fontSize: ScreenUtil().setSp(20),
+                                        color: Colors.white),
+                                  ),
+                                ),
                               ),
-                              child: Text(
-                                "下次继续",
-                                style: TextStyle(
-                                    fontSize: ScreenUtil().setSp(20),
-                                    color: Colors.white),
+                              Container(
+                                width: ScreenUtil().setWidth(1),
+                                height: ScreenUtil().setWidth(30),
+                                color: Colors.white,
                               ),
-                            ),
-                          ),
-                          Container(
-                            width: ScreenUtil().setWidth(1),
-                            height: ScreenUtil().setWidth(30),
-                            color: Colors.white,
-                          ),
-                          InkWell(
-                            onTap: () {
-                              //!完成
-                            },
-                            child: Container(
-                              alignment: Alignment.center,
-                              padding: EdgeInsets.only(
-                                left: ScreenUtil().setWidth(69),
-                                right: ScreenUtil().setWidth(64),
-                              ),
-                              child: Text(
-                                "完成",
-                                style: TextStyle(
-                                    fontSize: ScreenUtil().setSp(20),
-                                    color: Colors.white),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                              InkWell(
+                                onTap: () {
+                                  //!完成
+
+                                  //*3种开始方式分别处理 {0,1,2} (仅对方式2进行处理)
+                                  if (widget.startType == 1) {
+                                    // todosNotifier
+                                    //     .todosInId(widget.todo.id)
+                                    //     .type = 2;
+                                    // //*
+                                    // todosNotifier.notifyListeners();
+                                    widget.todo.type = 2;
+                                    todosNotifier.update(
+                                        widget.todo.id, widget.todo);
+                                  }
+
+                                  //*AddTask
+                                  timingNotifier.tapStop();
+                                  addTask(
+                                      task: _task,
+                                      tasksNotifier: tasksNotifier,
+                                      titleController: titleController);
+                                },
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  padding: EdgeInsets.only(
+                                    left: ScreenUtil().setWidth(69),
+                                    right: ScreenUtil().setWidth(64),
+                                  ),
+                                  child: Text(
+                                    "完成",
+                                    style: TextStyle(
+                                        fontSize: ScreenUtil().setSp(20),
+                                        color: Colors.white),
+                                  ),
+                                ),
+                              )
+                            ]);
+                      }),
                     ),
                   ),
                   //*任务信息栏
@@ -235,5 +291,43 @@ class _TimingPageState extends State<TimingPage> {
         ),
       ),
     );
+  }
+
+  addTask(
+      {TextEditingController titleController,
+      Task task,
+      TasksNotifier tasksNotifier}) {
+    if (titleController.value.text.isNotEmpty) {
+      task.title = titleController.text;
+    }
+    task.endTime = DateTime.now();
+    task.timeCost = task.endTime.difference(task.startTime);
+
+    //*添加task
+    tasksNotifier.insert(task).then((id) {
+      task.id = id;
+      Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(pageBuilder: (BuildContext context,
+              Animation<double> animation,
+              Animation<double> secondaryAnimation) {
+            return TaskDetailPage(
+              task: task,
+            );
+          }, transitionsBuilder: (
+            context,
+            animation,
+            secondaryAnimation,
+            child,
+          ) {
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0.0, 1.0),
+                end: const Offset(0.0, 0.0),
+              ).animate(animation),
+              child: child,
+            );
+          }));
+    });
   }
 }

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vistima_00/const.dart';
 import 'package:vistima_00/pages/0_HomePage/TagSheet.dart';
-import 'package:vistima_00/pages/0_HomePage/TimerWidget.dart';
+import 'package:vistima_00/widgets/TimerWidget.dart';
 import 'package:vistima_00/pages/0_HomePage/TodoSheet.dart';
 import 'package:vistima_00/utils.dart';
 import 'package:vistima_00/viewmodel/startViewModel.dart';
