@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:vistima_00/model/model.dart';
 import 'package:vistima_00/utils.dart';
 import 'package:vistima_00/viewmodel/tagViewModel.dart';
-import 'package:vistima_00/viewmodel/taskViewModel.dart';
 
 class ChipNotifier extends ChangeNotifier {
   List<dynamic> tagSelectValues;
@@ -33,6 +32,7 @@ Widget tagEdit({
         builder: (context, chipNotifier, tagsNotifier, _) {
       List<Tag> tags = tagsNotifier.getTags();
       LogUtil.e(tags, tag: 'TagEdit');
+
       return Wrap(
         spacing: 8.0,
         runSpacing: 0.0,

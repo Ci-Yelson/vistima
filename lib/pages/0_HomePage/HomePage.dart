@@ -1,12 +1,15 @@
+import 'package:animations/animations.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vistima_00/const.dart';
+import 'package:vistima_00/pages/0_HomePage/TagEditPage.dart';
+import 'package:vistima_00/pages/0_HomePage/TagEditWidget.dart';
 import 'package:vistima_00/pages/0_HomePage/TagSheet.dart';
+import 'package:vistima_00/widgets/TagEdit.dart';
 import 'package:vistima_00/widgets/TimerWidget.dart';
 import 'package:vistima_00/pages/0_HomePage/TodoSheet.dart';
 import 'package:vistima_00/utils.dart';
-import 'package:vistima_00/viewmodel/startViewModel.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key key}) : super(key: key);
@@ -79,7 +82,7 @@ class _HomePageState extends State<HomePage>
                   //*Tag
                   Container(
                     width: tagSheetWidth,
-                    child: tagColumn(),
+                    child: tagColumn(context),
                   )
                 ],
               )
@@ -118,15 +121,6 @@ class _HomePageState extends State<HomePage>
                   child: Container(
                 width: 1,
               )),
-              Container(
-                child: InkWell(
-                    onTap: () {},
-                    child: Image.asset(
-                      'assets/icons/名称顺序.png',
-                      width: ScreenUtil().setWidth(28),
-                      height: ScreenUtil().setHeight(28),
-                    )),
-              )
             ],
           ),
         ),
@@ -136,7 +130,7 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  Widget tagColumn() {
+  Widget tagColumn(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -162,14 +156,37 @@ class _HomePageState extends State<HomePage>
                   width: 1,
                 ),
               ),
+              // Container(
+              //   child: InkWell(
+              //       onTap: () {
+              //         //!
+              //         // showDialog(
+              //         //     context: context,
+              //         //     builder: (context) => TagEditDialog());
+              // showTagEditDialog(context);
+              //       },
+              //       child: Image.asset(
+              //         'assets/icons/edit.png',
+              //         width: ScreenUtil().setWidth(28),
+              //         height: ScreenUtil().setHeight(28),
+              //       )),
+              // ),
               Container(
-                child: InkWell(
-                    onTap: () {},
-                    child: Image.asset(
-                      'assets/icons/edit.png',
-                      width: ScreenUtil().setWidth(28),
-                      height: ScreenUtil().setHeight(28),
-                    )),
+                child: OpenContainer(
+                    closedColor: Colors.transparent,
+                    closedElevation: 0,
+                    openColor: Colors.transparent,
+                    openElevation: 0,
+                    closedBuilder: (_, openContainer) {
+                      return Image.asset(
+                        'assets/icons/edit.png',
+                        width: ScreenUtil().setWidth(28),
+                        height: ScreenUtil().setHeight(28),
+                      );
+                    },
+                    openBuilder: (context, _) {
+                      return TagEditPage();
+                    }),
               )
             ],
           ),

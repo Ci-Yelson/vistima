@@ -43,8 +43,8 @@ class MyApp extends StatelessWidget {
                 title: 'Vistima_00',
                 theme: ThemeData(
                     //设置分隔符颜色为透明
-                    dividerColor: Colors.transparent,
                     primaryColor: Colors.white,
+                    dividerColor: Colors.transparent,
                     // 设置路由进出动画
                     pageTransitionsTheme: PageTransitionsTheme(
                       builders: <TargetPlatform, PageTransitionsBuilder>{
@@ -84,28 +84,32 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       // backgroundColor: Colors.grey,
       //*显示页面
-      body: Column(
-        mainAxisSize: MainAxisSize.min,
+      body: ListView(
         children: [
-          //?状态栏背景颜色
-          Container(
-            height: ScreenUtil().setHeight(25),
-            color: Colors.transparent,
-          ),
-          Container(
-            height: MediaQuery.of(context).size.height -
-                ScreenUtil().setHeight(25) -
-                ScreenUtil().setHeight(66),
-            child: PageView.builder(
-              controller: _pageController,
-              onPageChanged: (index) => setState(() {
-                _pageIndex = index;
-              }),
-              itemBuilder: (BuildContext context, int index) {
-                return _pageList[index];
-              },
-              itemCount: 4,
-            ),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              //*状态栏背景颜色
+              // Container(
+              //   height: ScreenUtil().setHeight(25),
+              //   color: Colors.transparent,
+              // ),
+              Container(
+                height: MediaQuery.of(context).size.height -
+                    ScreenUtil().setHeight(25) -
+                    ScreenUtil().setHeight(66),
+                child: PageView.builder(
+                  controller: _pageController,
+                  onPageChanged: (index) => setState(() {
+                    _pageIndex = index;
+                  }),
+                  itemBuilder: (BuildContext context, int index) {
+                    return _pageList[index];
+                  },
+                  itemCount: 4,
+                ),
+              ),
+            ],
           ),
         ],
       ),

@@ -63,4 +63,15 @@ class TasksNotifier extends ChangeNotifier {
     await SQLHelper.updateTask(id, newTask);
     await _refresh();
   }
+
+  //*更新task的tagId
+  Future<void> updatetagId({int oldIds, int newId = -1}) async {
+    var tasks = tasksInTag(oldIds);
+    for (var task in tasks) {
+      task.tagIds.remove(oldIds);
+      if (newId != -1) task.tagIds.add(newId);
+      await SQLHelper.updateTask(task.id, task);
+    }
+    await _refresh();
+  }
 }

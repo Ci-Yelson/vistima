@@ -32,9 +32,17 @@ Widget startButton(BuildContext context) {
   return Container(
     height: ScreenUtil().setHeight(64),
     width: ScreenUtil().setHeight(64),
+    // color: Colors.transparent,
     child: ClipOval(
       child: Container(
-        color: vColorMap['icon'],
+        //*阴影未作用
+        decoration: BoxDecoration(color: vColorMap['icon'], boxShadow: [
+          BoxShadow(
+            blurRadius: 1,
+            spreadRadius: 5,
+            color: Colors.red,
+          ),
+        ]),
         padding: EdgeInsets.all(ScreenUtil().setHeight(7)),
         child: Row(
           children: [

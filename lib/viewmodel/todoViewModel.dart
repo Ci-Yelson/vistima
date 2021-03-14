@@ -70,4 +70,15 @@ class TodosNotifier extends ChangeNotifier {
     await SQLHelper.updateTodo(id, newTodo);
     await _refresh();
   }
+
+  //*更新todo的tagId
+  Future<void> updatetagId({int oldIds, int newId = -1}) async {
+    var todos = todosInTag(oldIds);
+    for (var todo in todos) {
+      todo.tagIds.remove(oldIds);
+      if (newId != -1) todo.tagIds.add(newId);
+      await SQLHelper.updateTodo(todo.id, todo);
+    }
+    await _refresh();
+  }
 }

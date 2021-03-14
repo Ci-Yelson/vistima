@@ -44,6 +44,8 @@ dependencies:
   common_utils: ^1.2.4
   #页面进出动画
   animations: ^1.1.2
+  #圆形选择器
+  circular_check_box: ^1.0.4
 
 
 
@@ -68,6 +70,14 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/icons/bottom_appbar/home.png
+    - assets/icons/bottom_appbar/homefill.png
+    - assets/icons/bottom_appbar/todo.png
+    - assets/icons/bottom_appbar/todofill.png
+    - assets/icons/bottom_appbar/list.png
+    - assets/icons/bottom_appbar/listfill.png
+    - assets/icons/bottom_appbar/user.png
+    - assets/icons/bottom_appbar/userfill.png
     - assets/images/Start.png
     - assets/images/A2.jpg
     - assets/images/A2-1.jpg
