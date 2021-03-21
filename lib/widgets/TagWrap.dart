@@ -11,50 +11,63 @@ Widget tagWrap(
     @required List<dynamic> tagIds,
     @required Color backGroundColor,
     bool showEdit = false,
+    Color editIconColor,
     Function ontap}) {
   return Consumer<TagsNotifier>(builder: (context, tagsNotifier, _) {
     List<Tag> tags = [];
 
     for (var id in tagIds) {
+      // //*Test
+      // for (var i = 0; i < 10; i++) {
+      //   tags.add(tagsNotifier.getTags().firstWhere((t) => t.id == id));
+      // }
       tags.add(tagsNotifier.getTags().firstWhere((t) => t.id == id));
     }
-    return tags.isNotEmpty
-        ? Wrap(
-            children: [
-              Wrap(
-                children: List.generate(
-                    tagIds.length,
-                    (i) => sizedTagChip(
-                          Text(
-                            tags[i].title,
-                            style: TextStyle(
-                                fontSize: ScreenUtil().setSp(14),
-                                color: Colors.white),
-                          ),
-                          backGroundColor,
-                        )),
-              ),
-              showEdit
-                  ? InkWell(
-                      child: sizedTagChip(
-                          Icon(
-                            Icons.edit,
-                            size: ScreenUtil().setSp(20),
-                          ),
-                          backGroundColor),
-                      onTap: ontap,
-                    )
-                  : Container()
-            ],
-          )
-        : sizedTagChip(
-            Text(
-              "无",
-              style: TextStyle(
-                  fontSize: ScreenUtil().setSp(14), color: Colors.white),
-            ),
-            Colors.grey.withAlpha(150),
-          );
+
+    return Wrap(
+      children: [
+        Wrap(
+          children: (tags.isNotEmpty
+                  ? List.generate(
+                      tags.length,
+                      (i) => sizedTagChip(
+                            Text(
+                              tags[i].title,
+                              style: TextStyle(
+                                  fontSize: ScreenUtil().setSp(14),
+                                  color: Colors.white),
+                            ),
+                            backGroundColor,
+                          ))
+                  : [
+                      sizedTagChip(
+                        Text(
+                          "无",
+                          style: TextStyle(
+                              fontSize: ScreenUtil().setSp(14),
+                              color: Colors.white),
+                        ),
+                        // Colors.grey.withAlpha(150),
+                        backGroundColor,
+                      )
+                    ]) +
+              [
+                showEdit
+                    ? InkWell(
+                        child: sizedTagChip(
+                            Icon(
+                              Icons.edit,
+                              color: editIconColor ?? Colors.black,
+                              size: ScreenUtil().setSp(20),
+                            ),
+                            backGroundColor),
+                        onTap: ontap,
+                      )
+                    : Container()
+              ],
+        ),
+      ],
+    );
   });
 }
 

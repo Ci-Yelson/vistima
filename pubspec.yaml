@@ -46,6 +46,9 @@ dependencies:
   animations: ^1.1.2
   #圆形选择器
   circular_check_box: ^1.0.4
+  #markdown
+  # flutter_markdown: ^0.6.0
+  zefyr: ^0.12.0 
 
 
 
@@ -86,6 +89,7 @@ flutter:
     - assets/icons/详细描述.png
     - assets/icons/编辑.png
     - assets/icons/edit.png
+    - assets/markdown.md
     # - assets
   #   - images/a_dot_ham.jpeg
 

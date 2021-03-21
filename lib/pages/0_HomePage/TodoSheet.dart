@@ -1,4 +1,5 @@
 import 'package:common_utils/common_utils.dart';
+import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +9,7 @@ import 'package:vistima_00/utils.dart';
 import 'package:vistima_00/viewmodel/startViewModel.dart';
 import 'package:vistima_00/viewmodel/todoViewModel.dart';
 import 'package:vistima_00/widgets/TagWrap.dart';
+import 'package:vistima_00/widgets/VCheckBox.dart';
 
 class TodoSheet extends StatefulWidget {
   const TodoSheet({Key key}) : super(key: key);
@@ -127,36 +129,76 @@ class _TodoSheetState extends State<TodoSheet>
         });
       },
       child: Card(
-        child: Stack(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              height: todoCardHeight,
-              alignment: Alignment.centerLeft,
-              padding: EdgeInsets.only(
-                top: ScreenUtil().setHeight(4),
-                left: ScreenUtil().setWidth(10),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    todo.title,
-                    style: TextStyle(fontSize: ScreenUtil().setSp(18)),
+            // //*选中样式处理
+            // Container(
+            //   height: todoCardHeight,
+            //   color: _selectIndex == todo.id
+            //       ? Colors.grey.withAlpha(50)
+            //       : Colors.transparent,
+            // ),
+            Row(
+              children: [
+                Container(
+                  // height: todoCardHeight,
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.only(
+                    top: ScreenUtil().setHeight(4),
+                    left: ScreenUtil().setWidth(10),
                   ),
-                  //*tagWrap
-                  tagWrap(
-                      context: context,
-                      tagIds: todo.tagIds,
-                      backGroundColor: vColorMap['icon']),
-                ],
-              ),
-            ),
-            //*选中样式处理
-            Container(
-              height: todoCardHeight,
-              color: _selectIndex == todo.id
-                  ? Colors.grey.withAlpha(150)
-                  : Colors.transparent,
+                  child: Container(
+                    width: ScreenUtil().setWidth(180),
+                    // color: Colors.red,
+                    child: ListView(
+                      // crossAxisAlignment: CrossAxisAlignment.start,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(), //禁用滑动事件
+                      children: [
+                        Text(
+                          todo.title,
+                          style: TextStyle(fontSize: ScreenUtil().setSp(18)),
+                        ),
+                        //*tagWrap
+                        tagWrap(
+                            context: context,
+                            tagIds: todo.tagIds,
+                            backGroundColor: vColorMap['icon']),
+                        //*
+                        todo.type == 0 && todo.startTime != null
+                            ? Container(
+                                padding: EdgeInsets.only(
+                                  bottom: ScreenUtil().setHeight(4),
+                                ),
+                                child: Text(
+                                  "计划开始时间：${formatDate(todo.startTime, [
+                                    yyyy,
+                                    '/',
+                                    mm,
+                                    '/',
+                                    dd,
+                                    ' - ',
+                                    HH,
+                                    ':',
+                                    nn,
+                                  ])}",
+                                  style: TextStyle(
+                                      fontSize: ScreenUtil().setSp(12),
+                                      color: Colors.grey),
+                                ),
+                              )
+                            : Container()
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(child: Container()),
+                VCheckBox(isSelected: _selectIndex == todo.id),
+                SizedBox(
+                  width: ScreenUtil().setWidth(6),
+                ),
+              ],
             ),
           ],
         ),

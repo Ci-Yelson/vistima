@@ -1,8 +1,10 @@
+import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:vistima_00/const.dart';
 import 'package:vistima_00/model/model.dart';
+import 'package:vistima_00/pages/1_TodoPage/TodoEditDialog.dart';
 import 'package:vistima_00/utils.dart';
 import 'package:vistima_00/viewmodel/startViewModel.dart';
 import 'package:vistima_00/viewmodel/todoViewModel.dart';
@@ -72,7 +74,7 @@ class _TodoPageState extends State<TodoPage>
             ),
             //*P2
             Container(
-              height: ScreenUtil().setHeight(500),
+              // height: ScreenUtil().setHeight(500),
               child: Consumer2<TodosNotifier, StartNotifier>(
                   builder: (context, todosNotifier, startNotifier, _) {
                 //*获取todos并分类显示
@@ -93,6 +95,8 @@ class _TodoPageState extends State<TodoPage>
                 return ListView(
                   padding: EdgeInsets.only(top: 0),
                   // children: allList,
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
                   children: [
                     expansionList(
                         todos: processings,
@@ -102,6 +106,37 @@ class _TodoPageState extends State<TodoPage>
                         todos: todos, type: 0, startNotifier: startNotifier),
                     expansionList(
                         todos: dones, type: 2, startNotifier: startNotifier),
+                    Container(
+                      // padding: EdgeInsets.only(left: ScreenUtil().setWidth(20)),
+                      // margin: EdgeInsets.all(ScreenUtil().setWidth(10)),
+                      // color: vColorMap['icon'],
+                      child: InkWell(
+                        onTap: () {
+                          //!添加待办
+                          showDialog(
+                              context: context,
+                              builder: (_) => TodoEditDialog(
+                                    todo: Todo(tagIds: []),
+                                    addTodo: true,
+                                  ));
+                        },
+                        child: Card(
+                          elevation: 0,
+                          color: vColorMap['icon'],
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: ScreenUtil().setHeight(8)),
+                            alignment: Alignment.center,
+                            child: Text(
+                              "添加待办",
+                              style: TextStyle(
+                                  fontSize: ScreenUtil().setSp(17),
+                                  color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 );
               }),
@@ -166,52 +201,7 @@ class _TodoPageState extends State<TodoPage>
       @required StartNotifier startNotifier}) {
     if (todos.isEmpty) return [Container()];
 
-    // String borderTiltle = "待完成";
-    // if (type == 1)
-    //   borderTiltle = "正在进行";
-    // else if (type == 2) borderTiltle = "已完成";
-
     return [
-      Container(
-        padding: EdgeInsets.only(
-            // top: ScreenUtil().setHeight(8),
-            // bottom: ScreenUtil().setHeight(8),
-            ),
-        alignment: Alignment.centerLeft,
-        child: Row(
-          children: [
-            // Container(
-            //   margin: EdgeInsets.only(
-            //     top: ScreenUtil().setHeight(4),
-            //     bottom: ScreenUtil().setHeight(4),
-            //     left: ScreenUtil().setWidth(4),
-            //     right: ScreenUtil().setWidth(4),
-            //   ),
-            //   child: ClipOval(
-            //       child: Container(
-            //     height: ScreenUtil().setHeight(5),
-            //     width: ScreenUtil().setWidth(5),
-            //     color: vColorMap['processing_todo'],
-            //   )),
-            // ),
-            // Text(
-            //   borderTiltle,
-            //   style: TextStyle(
-            //       fontSize: ScreenUtil().setSp(20),
-            //       // fontFamily: textfont,
-            //       color: vColorMap['processing_todo']),
-            // ),
-            // SizedBox(
-            //   width: ScreenUtil().setWidth(6),
-            // ),
-            // Expanded(
-            //     child: Container(
-            //   height: 1,
-            //   color: vColorMap['processing_todo'],
-            // ))
-          ],
-        ),
-      ),
       //!如何使用Selector缩小刷新范围
       ListView.builder(
         physics: const NeverScrollableScrollPhysics(),
@@ -230,6 +220,13 @@ class _TodoPageState extends State<TodoPage>
       onTap: () {
         //!点击事件处理
         // LogUtil.e("tap-${todo.id}");
+        showDialog(
+            context: context,
+            builder: (_) => TodoEditDialog(
+                  todo: todo,
+                )).then((value) {
+          setState(() {});
+        });
       },
       child: Card(
         child: Row(
@@ -249,25 +246,78 @@ class _TodoPageState extends State<TodoPage>
               )),
             ),
             Container(
-              height: todoCardHeight,
+              // height: todoCardHeight,
               alignment: Alignment.centerLeft,
               padding: EdgeInsets.only(
                 top: ScreenUtil().setHeight(4),
                 left: ScreenUtil().setWidth(10),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    todo.title,
-                    style: TextStyle(fontSize: ScreenUtil().setSp(18)),
-                  ),
-                  //*tagWrap
-                  tagWrap(
-                      context: context,
-                      tagIds: todo.tagIds,
-                      backGroundColor: vColorMap['icon']),
-                ],
+              child: Container(
+                width: ScreenUtil().setWidth(300),
+                // color: Colors.red,
+                child: ListView(
+                  // crossAxisAlignment: CrossAxisAlignment.start,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(), //禁用滑动事件
+                  children: [
+                    Text(
+                      todo.title,
+                      style: TextStyle(fontSize: ScreenUtil().setSp(18)),
+                    ),
+                    //*tagWrap
+                    tagWrap(
+                        context: context,
+                        tagIds: todo.tagIds,
+                        backGroundColor: vColorMap['icon']),
+                    //*开始/完成时间
+                    todo.type == 0 && todo.startTime != null
+                        ? Container(
+                            padding: EdgeInsets.only(
+                              bottom: ScreenUtil().setHeight(4),
+                            ),
+                            child: Text(
+                              "计划开始时间：${formatDate(todo.startTime, [
+                                yy,
+                                '/',
+                                mm,
+                                '/',
+                                dd,
+                                ' - ',
+                                HH,
+                                ':',
+                                nn,
+                              ])}",
+                              style: TextStyle(
+                                  fontSize: ScreenUtil().setSp(12),
+                                  color: Colors.grey),
+                            ),
+                          )
+                        : Container(),
+                    todo.type == 2 && todo.endTime != null
+                        ? Container(
+                            padding: EdgeInsets.only(
+                              bottom: ScreenUtil().setHeight(4),
+                            ),
+                            child: Text(
+                              "完成时间：${formatDate(todo.endTime, [
+                                yy,
+                                '/',
+                                mm,
+                                '/',
+                                dd,
+                                ' - ',
+                                HH,
+                                ':',
+                                nn,
+                              ])}",
+                              style: TextStyle(
+                                  fontSize: ScreenUtil().setSp(12),
+                                  color: Colors.grey),
+                            ),
+                          )
+                        : Container()
+                  ],
+                ),
               ),
             ),
           ],

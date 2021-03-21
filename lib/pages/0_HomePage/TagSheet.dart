@@ -6,6 +6,7 @@ import 'package:vistima_00/const.dart';
 import 'package:vistima_00/model/model.dart';
 import 'package:vistima_00/viewmodel/startViewModel.dart';
 import 'package:vistima_00/viewmodel/tagViewModel.dart';
+import 'package:vistima_00/widgets/VCheckBox.dart';
 
 class TagSheet extends StatefulWidget {
   const TagSheet({Key key}) : super(key: key);
@@ -54,20 +55,29 @@ class _TagSheetState extends State<TagSheet> {
       child: Card(
         child: Stack(
           children: [
-            Container(
-                height: tagCardHeight,
-                alignment: Alignment.centerLeft,
-                padding: EdgeInsets.only(left: ScreenUtil().setWidth(10)),
-                child: Text(
-                  tag.title,
-                  style: TextStyle(fontSize: ScreenUtil().setSp(18)),
-                )),
-            Container(
-              height: tagCardHeight,
-              color: _todo.tagIds.contains(tag.id)
-                  ? Colors.grey.withAlpha(150)
-                  : Colors.transparent,
-            )
+            // Container(
+            //   height: tagCardHeight,
+            //   color: _todo.tagIds.contains(tag.id)
+            //       ? Colors.grey.withAlpha(50)
+            //       : Colors.transparent,
+            // ),
+            Row(
+              children: [
+                Container(
+                    height: tagCardHeight,
+                    alignment: Alignment.centerLeft,
+                    padding: EdgeInsets.only(left: ScreenUtil().setWidth(10)),
+                    child: Text(
+                      tag.title,
+                      style: TextStyle(fontSize: ScreenUtil().setSp(18)),
+                    )),
+                Expanded(child: Container()),
+                VCheckBox(isSelected: _todo.tagIds.contains(tag.id)),
+                SizedBox(
+                  width: ScreenUtil().setWidth(4),
+                ),
+              ],
+            ),
           ],
         ),
       ),

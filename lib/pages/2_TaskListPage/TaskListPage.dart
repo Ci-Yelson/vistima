@@ -81,7 +81,7 @@ class _TaskListPageState extends State<TaskListPage> {
                     highlightColor: Colors.red,
                     icon: Icon(Icons.event_note),
                     onPressed: () {
-                      //!
+                      //!日历
                     }),
               ],
             ),
@@ -131,6 +131,7 @@ class _TaskListPageState extends State<TaskListPage> {
 
                   return TaskTable(
                     tasks: tasks,
+                    tasksNotifier: tasksNotifier,
                   );
                 });
               }),

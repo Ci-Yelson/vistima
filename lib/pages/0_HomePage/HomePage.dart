@@ -3,8 +3,8 @@ import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vistima_00/const.dart';
+import 'package:vistima_00/pages/0_HomePage/TagEditDialog.dart';
 import 'package:vistima_00/pages/0_HomePage/TagEditPage.dart';
-import 'package:vistima_00/pages/0_HomePage/TagEditWidget.dart';
 import 'package:vistima_00/pages/0_HomePage/TagSheet.dart';
 import 'package:vistima_00/widgets/TagEdit.dart';
 import 'package:vistima_00/widgets/TimerWidget.dart';
@@ -156,38 +156,14 @@ class _HomePageState extends State<HomePage>
                   width: 1,
                 ),
               ),
-              // Container(
-              //   child: InkWell(
-              //       onTap: () {
-              //         //!
-              //         // showDialog(
-              //         //     context: context,
-              //         //     builder: (context) => TagEditDialog());
-              // showTagEditDialog(context);
-              //       },
-              //       child: Image.asset(
-              //         'assets/icons/edit.png',
-              //         width: ScreenUtil().setWidth(28),
-              //         height: ScreenUtil().setHeight(28),
-              //       )),
-              // ),
-              Container(
-                child: OpenContainer(
-                    closedColor: Colors.transparent,
-                    closedElevation: 0,
-                    openColor: Colors.transparent,
-                    openElevation: 0,
-                    closedBuilder: (_, openContainer) {
-                      return Image.asset(
-                        'assets/icons/edit.png',
-                        width: ScreenUtil().setWidth(28),
-                        height: ScreenUtil().setHeight(28),
-                      );
-                    },
-                    openBuilder: (context, _) {
-                      return TagEditPage();
-                    }),
-              )
+              InkWell(
+                  child: Image.asset(
+                    'assets/icons/edit.png',
+                    width: ScreenUtil().setWidth(28),
+                    height: ScreenUtil().setHeight(28),
+                  ),
+                  onTap: () => showDialog(
+                      context: context, builder: (_) => TagEditDialog())),
             ],
           ),
         ),

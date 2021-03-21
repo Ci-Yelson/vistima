@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:vistima_00/const.dart';
 import 'package:flutter/material.dart';
 import 'package:vistima_00/model/model.dart';
+import 'package:vistima_00/pages/0_HomePage/TagEditDialog.dart';
 import 'package:vistima_00/pages/2_TaskListPage/TaskDetailPage.dart';
 import 'package:vistima_00/pages/TimingPage/TimingNotifier.dart';
 import 'package:vistima_00/pages/TimingPage/TimingTableWidget.dart';
@@ -241,22 +242,14 @@ class _TimingPageState extends State<TimingPage> {
                                   showDialog(
                                       context: context,
                                       builder: (context) {
-                                        return SimpleDialog(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(
-                                                    ScreenUtil().setWidth(10))),
-                                          ),
-                                          children: [
-                                            addTag(),
-                                            SimpleDialogOption(
-                                              child: tagEdit(
-                                                task: _task,
-                                              ),
-                                            ),
-                                          ],
+                                        return TagEditDialog(
+                                          editToTodo: true,
+                                          todo: widget.todo,
+                                          useBlur: true,
                                         );
-                                      });
+                                      }).then((value) {
+                                    setState(() {});
+                                  });
                                 }),
                           ],
                         ),
@@ -319,6 +312,7 @@ class _TimingPageState extends State<TimingPage> {
               Animation<double> secondaryAnimation) {
             return TaskDetailPage(
               task: task,
+              tasksNotifier: tasksNotifier,
             );
           }, transitionsBuilder: (
             context,

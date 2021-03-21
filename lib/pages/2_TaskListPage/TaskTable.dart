@@ -5,16 +5,20 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vistima_00/model/model.dart';
 import 'package:vistima_00/pages/2_TaskListPage/TaskDetailPage.dart';
 import 'package:vistima_00/utils.dart';
+import 'package:vistima_00/viewmodel/taskViewModel.dart';
 import 'package:vistima_00/widgets/TagWrap.dart';
 
 class TaskTable extends StatelessWidget {
   final List<Task> tasks;
+  final TasksNotifier tasksNotifier;
 
-  const TaskTable({Key key, this.tasks}) : super(key: key);
+  const TaskTable({Key key, this.tasks, @required this.tasksNotifier})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+        physics: const NeverScrollableScrollPhysics(),
         padding: EdgeInsets.zero,
         shrinkWrap: true,
         itemCount: tasks.length,
@@ -32,6 +36,7 @@ class TaskTable extends StatelessWidget {
                 openBuilder: (_, __) {
                   return TaskDetailPage(
                     task: tasks[index],
+                    tasksNotifier: tasksNotifier,
                   );
                 }),
           );
