@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/screen_util.dart';
 
 const activeColor = Colors.blue;
 const normalColor = Colors.grey;
-double iconSize = ScreenUtil().setSp(34);
+double iconSize = ScreenUtil().setSp(28);
 double iconItemHeight = ScreenUtil().setHeight(66);
 double iconItemWidth = ScreenUtil().setWidth(66);
 

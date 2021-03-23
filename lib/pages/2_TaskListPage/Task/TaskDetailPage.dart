@@ -226,7 +226,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                             width: ScreenUtil().setWidth(6),
                           ),
                           Text(
-                            '时间 ${widget.task.timeCost.inHours} h ${widget.task.timeCost.inMinutes} m',
+                            '时间 ${widget.task.timeCost.inHours} h ${widget.task.timeCost.inMinutes} min',
                             style: TextStyle(
                               color: vColorMap['mainText'],
                               fontSize: ScreenUtil().setSp(25),
@@ -332,7 +332,6 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                                         Animation<double> secondaryAnimation) {
                                   return NoteEditorPage(
                                     task: widget.task,
-                                    tasksNotifier: widget.tasksNotifier,
                                   );
                                 })).then((value) {
                                   _loadDocument().then((document) {

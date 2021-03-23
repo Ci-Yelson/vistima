@@ -12,7 +12,7 @@ import 'package:vistima_00/model/model.dart';
 import 'package:vistima_00/pages/0_HomePage/HomePage.dart';
 import 'package:vistima_00/pages/1_TodoPage/TodoPage.dart';
 import 'package:vistima_00/pages/2_TaskListPage/TaskListPage.dart';
-import 'package:vistima_00/pages/3_UserPage/UserPage.dart';
+import 'package:vistima_00/pages/3_UserPage/charts/charts_page.dart';
 import 'package:vistima_00/viewmodel/startViewModel.dart';
 import 'package:vistima_00/widgets/VBottomAppBar.dart';
 import 'package:vistima_00/widgets/VFloatingActionButton.dart';
@@ -68,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _pageIndex = 0;
 
   List<Widget> _getList() {
-    return [HomePage(), TodoPage(), TaskListPage(), UserPage()];
+    return [HomePage(), TodoPage(), TaskListPage(), ChartPage()];
   }
 
   //点击BottomItem跳转页面
@@ -85,18 +85,19 @@ class _MyHomePageState extends State<MyHomePage> {
       // backgroundColor: Colors.grey,
       //*显示页面
       body: ListView(
+        physics: const NeverScrollableScrollPhysics(),
         children: [
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               //*状态栏背景颜色
-              // Container(
-              //   height: ScreenUtil().setHeight(25),
-              //   color: Colors.transparent,
-              // ),
+              Container(
+                height: ScreenUtil().setHeight(6),
+                color: Colors.transparent,
+              ),
               Container(
                 height: MediaQuery.of(context).size.height -
-                    ScreenUtil().setHeight(25) -
+                    ScreenUtil().setHeight(30) -
                     ScreenUtil().setHeight(66),
                 child: PageView.builder(
                   controller: _pageController,

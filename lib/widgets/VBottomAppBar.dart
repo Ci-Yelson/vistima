@@ -1,5 +1,6 @@
 import 'package:common_utils/common_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vistima_00/const.dart';
 
 class VBottomAppBar extends StatelessWidget {
@@ -70,9 +71,13 @@ class VBottomAppBar extends StatelessWidget {
                 Container(
                   height: iconSize,
                   width: iconSize,
-                  child: Image.asset(isActive
-                      ? activeIconsMap[activeIconsMap.keys.toList()[e]]
-                      : normalIconsMap[normalIconsMap.keys.toList()[e]]),
+                  child: Image.asset(
+                    isActive
+                        ? activeIconsMap[activeIconsMap.keys.toList()[e]]
+                        : normalIconsMap[normalIconsMap.keys.toList()[e]],
+                    // height: ScreenUtil().setHeight(30),
+                    // width: ScreenUtil().setHeight(30),
+                  ),
                 )
               ],
             ),

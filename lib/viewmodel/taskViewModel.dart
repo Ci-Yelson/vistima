@@ -27,10 +27,28 @@ class TasksNotifier extends ChangeNotifier {
     return _tasks.singleWhere((task) => task.id == id);
   }
 
-  //*按日期获取task
+  //*获取本日task
   List<Task> tasksInDate(DateTime date) {
     return _tasks
         .where((t) => TimeUtil.isInSameDay(t.startTime, date))
+        .toList()
+        .reversed
+        .toList();
+  }
+
+  //*获取本周task
+  List<Task> tasksInWeek(DateTime date) {
+    return _tasks
+        .where((t) => TimeUtil.isInSameWeek(t.startTime, date))
+        .toList()
+        .reversed
+        .toList();
+  }
+
+  //*获取本月task
+  List<Task> tasksInMonth(DateTime date) {
+    return _tasks
+        .where((t) => TimeUtil.isInSameMonth(t.startTime, date))
         .toList()
         .reversed
         .toList();

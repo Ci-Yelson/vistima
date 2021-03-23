@@ -25,124 +25,121 @@ class _TodoPageState extends State<TodoPage>
     super.build(context);
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Padding(
+      body: ListView(
+        // physics: const NeverScrollableScrollPhysics(),
         padding: EdgeInsets.only(left: pageMagrin, right: pageMagrin),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            //*P1
-            SizedBox(
-              height: ScreenUtil().setHeight(17),
+        shrinkWrap: true,
+        children: [
+          //*P1
+          SizedBox(
+            height: ScreenUtil().setHeight(17),
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  child: Image.asset(
+                    'assets/icons/详细描述.png',
+                    width: ScreenUtil().setWidth(32),
+                    height: ScreenUtil().setHeight(32),
+                    color: vColorMap['subText'],
+                  ),
+                ),
+                SizedBox(
+                  width: ScreenUtil().setWidth(6),
+                ),
+                Container(
+                  child: Text(
+                    "待办事项",
+                    style: TextStyle(
+                        fontSize: ScreenUtil().setSp(35),
+                        color: vColorMap['subText'],
+                        fontWeight: FontWeight.w600,
+                        // letterSpacing: 1.3,
+                        fontFamily: textfont),
+                  ),
+                ),
+                Expanded(
+                    child: Container(
+                  width: 1,
+                )),
+                TimerWidget()
+              ],
             ),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    child: Image.asset(
-                      'assets/icons/详细描述.png',
-                      width: ScreenUtil().setWidth(32),
-                      height: ScreenUtil().setHeight(32),
-                    ),
-                  ),
-                  SizedBox(
-                    width: ScreenUtil().setWidth(6),
-                  ),
-                  Container(
-                    child: Text(
-                      "待办事项",
-                      style: TextStyle(
-                          fontSize: ScreenUtil().setSp(35),
-                          color: vColorMap['mainText'],
-                          fontWeight: FontWeight.w600,
-                          // letterSpacing: 1.3,
-                          fontFamily: textfont),
-                    ),
-                  ),
-                  Expanded(
+          ),
+          SizedBox(
+            height: ScreenUtil().setHeight(3),
+          ),
+          //*P2
+          Consumer2<TodosNotifier, StartNotifier>(
+              builder: (context, todosNotifier, startNotifier, _) {
+            //*获取todos并分类显示
+            List<Todo> allTodos = todosNotifier.getTodos();
+            List<Todo> todos = allTodos.where((t) => t.type == 0).toList();
+            List<Todo> processings =
+                allTodos.where((t) => t.type == 1).toList();
+            List<Todo> dones = allTodos.where((t) => t.type == 2).toList();
+
+            // List<Widget> allList = todoList(
+            //         todos: processings,
+            //         type: 1,
+            //         startNotifier: startNotifier) +
+            //     todoList(todos: todos, startNotifier: startNotifier) +
+            //     todoList(
+            //         todos: dones, type: 2, startNotifier: startNotifier);
+
+            return ListView(
+              padding: EdgeInsets.only(top: 0),
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              children: [
+                expansionList(
+                    todos: processings, type: 1, startNotifier: startNotifier),
+                expansionList(
+                    todos: todos, type: 0, startNotifier: startNotifier),
+                expansionList(
+                    todos: dones, type: 2, startNotifier: startNotifier),
+                Container(
+                  // padding: EdgeInsets.only(left: ScreenUtil().setWidth(20)),
+                  // margin: EdgeInsets.all(ScreenUtil().setWidth(10)),
+                  // color: vColorMap['icon'],
+                  child: InkWell(
+                    onTap: () {
+                      //!添加待办
+                      showDialog(
+                          context: context,
+                          builder: (_) => TodoEditDialog(
+                                todo: Todo(tagIds: []),
+                                addTodo: true,
+                              ));
+                    },
+                    child: Card(
+                      elevation: 0,
+                      color: vColorMap['icon'],
                       child: Container(
-                    width: 1,
-                  )),
-                  TimerWidget()
-                ],
-              ),
-            ),
-            SizedBox(
-              height: ScreenUtil().setHeight(3),
-            ),
-            //*P2
-            Container(
-              // height: ScreenUtil().setHeight(500),
-              child: Consumer2<TodosNotifier, StartNotifier>(
-                  builder: (context, todosNotifier, startNotifier, _) {
-                //*获取todos并分类显示
-                List<Todo> allTodos = todosNotifier.getTodos();
-                List<Todo> todos = allTodos.where((t) => t.type == 0).toList();
-                List<Todo> processings =
-                    allTodos.where((t) => t.type == 1).toList();
-                List<Todo> dones = allTodos.where((t) => t.type == 2).toList();
-
-                // List<Widget> allList = todoList(
-                //         todos: processings,
-                //         type: 1,
-                //         startNotifier: startNotifier) +
-                //     todoList(todos: todos, startNotifier: startNotifier) +
-                //     todoList(
-                //         todos: dones, type: 2, startNotifier: startNotifier);
-
-                return ListView(
-                  padding: EdgeInsets.only(top: 0),
-                  // children: allList,
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  children: [
-                    expansionList(
-                        todos: processings,
-                        type: 1,
-                        startNotifier: startNotifier),
-                    expansionList(
-                        todos: todos, type: 0, startNotifier: startNotifier),
-                    expansionList(
-                        todos: dones, type: 2, startNotifier: startNotifier),
-                    Container(
-                      // padding: EdgeInsets.only(left: ScreenUtil().setWidth(20)),
-                      // margin: EdgeInsets.all(ScreenUtil().setWidth(10)),
-                      // color: vColorMap['icon'],
-                      child: InkWell(
-                        onTap: () {
-                          //!添加待办
-                          showDialog(
-                              context: context,
-                              builder: (_) => TodoEditDialog(
-                                    todo: Todo(tagIds: []),
-                                    addTodo: true,
-                                  ));
-                        },
-                        child: Card(
-                          elevation: 0,
-                          color: vColorMap['icon'],
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: ScreenUtil().setHeight(8)),
-                            alignment: Alignment.center,
-                            child: Text(
-                              "添加待办",
-                              style: TextStyle(
-                                  fontSize: ScreenUtil().setSp(17),
-                                  color: Colors.white),
-                            ),
-                          ),
+                        padding: EdgeInsets.symmetric(
+                            vertical: ScreenUtil().setHeight(8)),
+                        alignment: Alignment.center,
+                        child: Text(
+                          "添加待办",
+                          style: TextStyle(
+                              fontSize: ScreenUtil().setSp(17),
+                              color: Colors.white),
                         ),
                       ),
                     ),
-                  ],
-                );
-              }),
-            ),
-          ],
-        ),
+                  ),
+                ),
+                SizedBox(
+                  height: ScreenUtil().setHeight(50),
+                )
+              ],
+            );
+          }),
+        ],
       ),
     );
   }

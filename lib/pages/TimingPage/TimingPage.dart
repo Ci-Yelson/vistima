@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:common_utils/common_utils.dart';
@@ -7,13 +8,16 @@ import 'package:vistima_00/const.dart';
 import 'package:flutter/material.dart';
 import 'package:vistima_00/model/model.dart';
 import 'package:vistima_00/pages/0_HomePage/TagEditDialog.dart';
+import 'package:vistima_00/pages/2_TaskListPage/NoteEditorPage.dart';
 import 'package:vistima_00/pages/2_TaskListPage/TaskDetailPage.dart';
 import 'package:vistima_00/pages/TimingPage/TimingNotifier.dart';
 import 'package:vistima_00/pages/TimingPage/TimingTableWidget.dart';
+import 'package:vistima_00/utils.dart';
 import 'package:vistima_00/viewmodel/taskViewModel.dart';
 import 'package:vistima_00/viewmodel/todoViewModel.dart';
 import 'package:vistima_00/widgets/TagEdit.dart';
 import 'package:vistima_00/widgets/TagWrap.dart';
+import 'package:zefyr/zefyr.dart';
 
 class TimingPage extends StatefulWidget {
   final Todo todo;
@@ -29,10 +33,20 @@ class TimingPage extends StatefulWidget {
 class _TimingPageState extends State<TimingPage> {
   TextEditingController titleController = TextEditingController();
 
+  ZefyrController _controller;
+  FocusNode _focusNode;
+  Task _task;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+  }
+
   @override
   Widget build(BuildContext context) {
     //*实例化_task
-    Task _task = widget.todo.toTask();
+    _task = widget.todo.toTask();
 
     //*计时状态管理
     final timingNotifier = TimingNotifier();
@@ -43,7 +57,7 @@ class _TimingPageState extends State<TimingPage> {
       children: [
         //*底层背景图片与高斯模糊
         Image.asset(
-          'assets/images/A2-1.jpg',
+          'assets/images/71.jpeg',
           height: double.infinity,
           width: double.infinity,
           fit: BoxFit.cover,
@@ -218,7 +232,7 @@ class _TimingPageState extends State<TimingPage> {
                                     decoration: InputDecoration(
                                         hintText: "${_task.title}",
                                         hintStyle:
-                                            TextStyle(color: Colors.grey),
+                                            TextStyle(color: Colors.white70),
                                         enabledBorder: UnderlineInputBorder(
                                           borderSide:
                                               BorderSide(color: Colors.white),
@@ -233,7 +247,8 @@ class _TimingPageState extends State<TimingPage> {
                             tagWrap(
                                 context: context,
                                 tagIds: _task.tagIds,
-                                backGroundColor: Colors.grey,
+                                backGroundColor: Colors.white38,
+                                editIconColor: Colors.white,
                                 showEdit: true,
                                 ontap: () {
                                   //!
@@ -258,16 +273,112 @@ class _TimingPageState extends State<TimingPage> {
                       glassCardWidget(
                           sigma: 12,
                           child: Container(
-                            height: ScreenUtil().setHeight(250),
-                            width: ScreenUtil().setWidth(344),
-                            alignment: Alignment.center,
-                            child: Text(
-                              "Note",
-                              style: TextStyle(
-                                  fontSize: ScreenUtil().setSp(20),
-                                  color: Colors.white),
-                            ),
-                          ))
+                              height: ScreenUtil().setHeight(250),
+                              width: ScreenUtil().setWidth(344),
+                              alignment: Alignment.topCenter,
+                              child: Column(
+                                children: [
+                                  Container(
+                                    alignment: Alignment.centerLeft,
+                                    child: Row(
+                                      children: [
+                                        //*圆点
+                                        ClipOval(
+                                            child: Container(
+                                          height: ScreenUtil().setHeight(10),
+                                          width: ScreenUtil().setHeight(10),
+                                          color: Colors.white,
+                                        )),
+                                        SizedBox(
+                                          width: ScreenUtil().setWidth(6),
+                                        ),
+                                        Text(
+                                          'Note',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: ScreenUtil().setSp(18),
+                                          ),
+                                        ),
+                                        Expanded(child: Container()),
+                                        Expanded(
+                                          child: Container(
+                                            alignment: Alignment.centerRight,
+                                            child: FlatButton(
+                                                materialTapTargetSize:
+                                                    MaterialTapTargetSize
+                                                        .shrinkWrap,
+                                                color: Colors.transparent,
+                                                onPressed: () {
+                                                  Navigator.push(context,
+                                                      PageRouteBuilder(pageBuilder:
+                                                          (BuildContext context,
+                                                              Animation<double>
+                                                                  animation,
+                                                              Animation<double>
+                                                                  secondaryAnimation) {
+                                                    return NoteEditorPage(
+                                                      task: _task,
+                                                      controller: _controller,
+                                                    );
+                                                  })).then((value) {
+                                                    _loadDocument()
+                                                        .then((document) {
+                                                      setState(() {
+                                                        //!
+                                                        _controller =
+                                                            ZefyrController(
+                                                                document);
+                                                        _task.note = jsonEncode(
+                                                            _controller
+                                                                .document);
+                                                        LogUtil.e(_task.note,
+                                                            tag: "_task.note");
+                                                      });
+                                                    });
+                                                  });
+                                                },
+                                                child: Text(
+                                                  '编辑笔记',
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: ScreenUtil()
+                                                          .setSp(16)),
+                                                )),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  _task.note != null
+                                      ? _task.note.length != 17
+                                          ? buildEditor()
+                                          : Container(
+                                              height:
+                                                  ScreenUtil().setHeight(50),
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                ' 请输入笔记~',
+                                                style: TextStyle(
+                                                    fontSize:
+                                                        ScreenUtil().setSp(16),
+                                                    color: Colors.white38),
+                                              ),
+                                              color: Colors.transparent,
+                                            )
+                                      : Container(
+                                          height: ScreenUtil().setHeight(50),
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            ' 请输入笔记~',
+                                            style: TextStyle(
+                                                fontSize:
+                                                    ScreenUtil().setSp(16),
+                                                color: Colors.white38),
+                                          ),
+                                          color: Colors.transparent,
+                                        ),
+                                ],
+                              )))
                     ],
                   ),
                 ),
@@ -327,7 +438,35 @@ class _TimingPageState extends State<TimingPage> {
               ).animate(animation),
               child: child,
             );
-          }));
+          })).then((v) {
+        setState(() {});
+      });
     });
+  }
+
+  Future<NotusDocument> _loadDocument() async {
+    if (_task.note != null) {
+      return NotusDocument.fromJson(jsonDecode(_task.note));
+    }
+    return NotusDocument();
+  }
+
+  Widget buildEditor() {
+    return (_controller == null)
+        ? Center(child: CircularProgressIndicator())
+        : ZefyrField(
+            height: ScreenUtil().setHeight(650),
+            decoration: InputDecoration(
+              disabledBorder: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
+            ),
+            controller: _controller,
+            focusNode: _focusNode,
+            autofocus: false,
+            mode: ZefyrMode(canEdit: false, canSelect: true, canFormat: true),
+            // imageDelegate: CustomImageDelegate(),
+            physics: ClampingScrollPhysics(),
+          );
   }
 }

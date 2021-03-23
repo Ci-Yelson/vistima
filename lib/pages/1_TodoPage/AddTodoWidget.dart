@@ -1,3 +1,4 @@
+import 'package:common_utils/common_utils.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -37,6 +38,7 @@ class _SetTodoTypeWidgetState extends State<SetTodoTypeWidget> {
       child: Consumer<SetTodoTypeNotifier>(
         builder: (context, setTodoTypeNotifier, _) {
           int type = setTodoTypeNotifier.type;
+          LogUtil.e(widget.todo.type, tag: ">widget.todo。type");
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -46,6 +48,8 @@ class _SetTodoTypeWidgetState extends State<SetTodoTypeWidget> {
                   InkWell(
                     onTap: () {
                       setTodoTypeNotifier.changeType(0);
+                      //*
+                      widget.todo.type = 0;
                     },
                     child: Container(
                       width: ScreenUtil().setWidth(50),
@@ -74,6 +78,8 @@ class _SetTodoTypeWidgetState extends State<SetTodoTypeWidget> {
                   InkWell(
                     onTap: () {
                       setTodoTypeNotifier.changeType(1);
+                      //*
+                      widget.todo.type = 1;
                     },
                     child: Container(
                       //!
@@ -94,6 +100,8 @@ class _SetTodoTypeWidgetState extends State<SetTodoTypeWidget> {
                   InkWell(
                     onTap: () {
                       setTodoTypeNotifier.changeType(2);
+                      //*
+                      widget.todo.type = 2;
                     },
                     child: Container(
                       width: ScreenUtil().setWidth(50),
@@ -133,7 +141,8 @@ class _SetTodoTypeWidgetState extends State<SetTodoTypeWidget> {
                       // child: Text("编辑开始和结束时间"),
                       child: _timeShower(
                           todo: widget.todo,
-                          setTodoTypeNotifier: setTodoTypeNotifier),
+                          setTodoTypeNotifier: setTodoTypeNotifier,
+                          settype: widget.todo.type),
                     ),
             ],
           );
@@ -143,13 +152,16 @@ class _SetTodoTypeWidgetState extends State<SetTodoTypeWidget> {
   }
 
   Widget _timeShower(
-      {@required SetTodoTypeNotifier setTodoTypeNotifier, Todo todo}) {
+      {@required SetTodoTypeNotifier setTodoTypeNotifier,
+      Todo todo,
+      int settype}) {
     DateTime _startTime = todo.startTime ?? DateTime.now();
     DateTime _endTime = todo.endTime ?? DateTime.now();
-    int type = setTodoTypeNotifier.type;
+    int type = settype;
+    LogUtil.e(type, tag: ">TimeShower");
 
     //日期选择器
-    _datePicker({int type = 0}) {
+    _datePicker({int stype = 0}) {
       showDatePicker(
         context: context,
         initialDate: _startTime, //选中的日期
@@ -159,9 +171,9 @@ class _SetTodoTypeWidgetState extends State<SetTodoTypeWidget> {
         setState(() {
           if (selectedValue != null) {
             //将选中的值传递出来
-            type == 0 ? _startTime = selectedValue : _endTime = selectedValue;
+            stype == 0 ? _startTime = selectedValue : _endTime = selectedValue;
             //*更新任务信息
-            type == 0 ? todo.startTime = _startTime : todo.endTime = _endTime;
+            stype == 0 ? todo.startTime = _startTime : todo.endTime = _endTime;
             // todosNotifier.update(todo.id, todo);
           }
         });
@@ -169,7 +181,7 @@ class _SetTodoTypeWidgetState extends State<SetTodoTypeWidget> {
     }
 
     //时间选择器
-    _timePicker({int type = 0}) async {
+    _timePicker({int stype = 0}) async {
       // 获取异步方法里面的值的第二种方式：async+await
       //await的作用是等待异步方法showDatePicker执行完毕之后获取返回值
       var result = await showTimePicker(
@@ -178,14 +190,14 @@ class _SetTodoTypeWidgetState extends State<SetTodoTypeWidget> {
       );
       //将选中的值传递出来
       if (result != null) {
-        type == 0
+        stype == 0
             ? _startTime = DateTime(_startTime.year, _startTime.month,
                 _startTime.day, result.hour, result.minute)
             : _endTime = DateTime(_endTime.year, _endTime.month, _endTime.day,
                 result.hour, result.minute);
         setState(() {
           //*更新任务信息
-          type == 0 ? todo.startTime = _startTime : todo.endTime = _endTime;
+          stype == 0 ? todo.startTime = _startTime : todo.endTime = _endTime;
           // todosNotifier.update(todo.id, todo);
         });
       }
@@ -203,7 +215,7 @@ class _SetTodoTypeWidgetState extends State<SetTodoTypeWidget> {
             ),
             InkWell(
               onTap: () {
-                _datePicker(type: 0);
+                _datePicker(stype: 0);
               },
               child: Row(
                 children: [
@@ -217,7 +229,7 @@ class _SetTodoTypeWidgetState extends State<SetTodoTypeWidget> {
             ),
             InkWell(
               onTap: () {
-                _timePicker(type: 0);
+                _timePicker(stype: 0);
               },
               child: Row(
                 children: [
@@ -242,7 +254,7 @@ class _SetTodoTypeWidgetState extends State<SetTodoTypeWidget> {
                   ),
                   InkWell(
                     onTap: () {
-                      _datePicker(type: 1);
+                      _datePicker(stype: 1);
                     },
                     child: Row(
                       children: [
@@ -256,7 +268,7 @@ class _SetTodoTypeWidgetState extends State<SetTodoTypeWidget> {
                   ),
                   InkWell(
                     onTap: () {
-                      _timePicker(type: 1);
+                      _timePicker(stype: 1);
                     },
                     child: Row(
                       children: [

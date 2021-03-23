@@ -46,12 +46,12 @@ Widget startButton(BuildContext context) {
         padding: EdgeInsets.all(ScreenUtil().setHeight(7)),
         child: Row(
           children: [
-            SizedBox(width: ScreenUtil().setWidth(6.0)),
+            SizedBox(width: ScreenUtil().setHeight(10.0)),
             Image.asset(
               'assets/images/Start.png',
               color: Colors.white,
               height: ScreenUtil().setHeight(35),
-              width: ScreenUtil().setWidth(35),
+              width: ScreenUtil().setHeight(35),
             )
           ],
         ),

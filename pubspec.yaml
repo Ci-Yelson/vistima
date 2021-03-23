@@ -49,6 +49,8 @@ dependencies:
   #markdown
   # flutter_markdown: ^0.6.0
   zefyr: ^0.12.0 
+  #图表
+  charts_flutter: ^0.9.0
 
 
 
@@ -82,14 +84,12 @@ flutter:
     - assets/icons/bottom_appbar/user.png
     - assets/icons/bottom_appbar/userfill.png
     - assets/images/Start.png
-    - assets/images/A2.jpg
-    - assets/images/A2-1.jpg
+    - assets/images/71.jpeg
     - assets/icons/boltfill.png
     - assets/icons/名称顺序.png
     - assets/icons/详细描述.png
     - assets/icons/编辑.png
     - assets/icons/edit.png
-    - assets/markdown.md
     # - assets
   #   - images/a_dot_ham.jpeg
 

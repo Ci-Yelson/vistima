@@ -1,3 +1,4 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_calendar/flutter_custom_calendar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -5,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:vistima_00/model/model.dart';
 import 'package:vistima_00/pages/2_TaskListPage/TaskListWidget.dart';
 import 'package:vistima_00/pages/2_TaskListPage/TaskTable.dart';
+import 'package:vistima_00/pages/2_TaskListPage/month_calendar.dart';
 import 'package:vistima_00/utils.dart';
 import 'package:vistima_00/viewmodel/tagViewModel.dart';
 import 'package:vistima_00/viewmodel/taskViewModel.dart';
@@ -14,7 +16,8 @@ class TaskListPage extends StatefulWidget {
   _TaskListPageState createState() => _TaskListPageState();
 }
 
-class _TaskListPageState extends State<TaskListPage> {
+class _TaskListPageState extends State<TaskListPage>
+    with AutomaticKeepAliveClientMixin {
   CalendarController controller;
   ValueNotifier<String> text;
   ValueNotifier<String> selectText;
@@ -52,6 +55,7 @@ class _TaskListPageState extends State<TaskListPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       // backgroundColor: Colors.transparent,
       backgroundColor: Colors.grey[200],
@@ -77,12 +81,15 @@ class _TaskListPageState extends State<TaskListPage> {
                     }),
                 Expanded(child: Container()),
                 IconButton(
-                    splashColor: Colors.red,
-                    highlightColor: Colors.red,
-                    icon: Icon(Icons.event_note),
-                    onPressed: () {
-                      //!日历
-                    }),
+                  icon: Icon(Icons.event_note),
+                  onPressed: () {
+                    Navigator.push(context, PageRouteBuilder(pageBuilder:
+                        (BuildContext context, Animation<double> animation,
+                            Animation<double> secondaryAnimation) {
+                      return MonthCalendar();
+                    }));
+                  },
+                ),
               ],
             ),
           ),
@@ -139,4 +146,7 @@ class _TaskListPageState extends State<TaskListPage> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

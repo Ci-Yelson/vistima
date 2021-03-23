@@ -4,20 +4,19 @@ import 'package:common_utils/common_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:vistima_00/model/model.dart';
 import 'package:vistima_00/pages/TimingPage/TimingNotifier.dart';
-import 'package:vistima_00/viewmodel/taskViewModel.dart';
 import 'package:zefyr/zefyr.dart';
 
 class NoteEditorPage extends StatefulWidget {
   final Task task;
-  final TasksNotifier tasksNotifier;
+  final ZefyrController controller;
   final TimingNotifier timingNotifier;
   final bool isTiming;
 
   NoteEditorPage(
       {@required this.task,
-      @required this.tasksNotifier,
       this.isTiming = false,
-      this.timingNotifier});
+      this.timingNotifier,
+      this.controller});
 
   @override
   NoteEditorPageState createState() => NoteEditorPageState();
@@ -25,7 +24,6 @@ class NoteEditorPage extends StatefulWidget {
 
 class NoteEditorPageState extends State<NoteEditorPage> {
   ZefyrController _controller;
-
   FocusNode _focusNode;
 
   @override
@@ -34,7 +32,9 @@ class NoteEditorPageState extends State<NoteEditorPage> {
     _focusNode = FocusNode();
     _loadDocument().then((document) {
       setState(() {
-        _controller = ZefyrController(document);
+        if (widget.controller == null) {
+          _controller = ZefyrController(document);
+        }
       });
     });
   }

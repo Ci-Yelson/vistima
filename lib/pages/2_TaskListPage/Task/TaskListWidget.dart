@@ -51,7 +51,7 @@ class CustomStyleDayWidget extends BaseCombineDayWidget {
   @override
   Widget getNormalWidget(DateModel dateModel) {
     return Container(
-      margin: EdgeInsets.all(ScreenUtil().setHeight(12)),
+      margin: EdgeInsets.all(ScreenUtil().setWidth(8)),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: dateModel.isCurrentDay
@@ -70,7 +70,7 @@ class CustomStyleDayWidget extends BaseCombineDayWidget {
   @override
   Widget getSelectedWidget(DateModel dateModel) {
     return Container(
-      margin: EdgeInsets.all(ScreenUtil().setHeight(12)),
+      margin: EdgeInsets.all(ScreenUtil().setWidth(8)),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: selectedColor,
